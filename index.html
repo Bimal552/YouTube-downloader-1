@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Project</title>
+    <style>body {
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.container {
+    text-align: center;
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+h1 {
+    margin-bottom: 20px;
+}
+
+input {
+    width: 80%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+button {
+    padding: 10px 20px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #218838;
+}
+
+#response {
+    margin-top: 20px;
+    color: #333;
+}</style>
+</head>
+<body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Video Downloader</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>YouTube Video Downloader</h1>
+        <input type="text" id="videoUrl" placeholder="Enter YouTube Video URL">
+        <button id="downloadBtn">Download</button>
+        <div id="response"></div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
+<script>document.getElementById("downloadBtn").addEventListener("click", function () {
+    const videoUrl = document.getElementById("videoUrl").value;
+
+    if (!videoUrl) {
+        alert("Please enter a YouTube video URL.");
+        return;
+    }
+
+    const data = `url=${encodeURIComponent(videoUrl)}`;
+    const xhr = new XMLHttpRequest();
+
+    xhr.withCredentials = true;
+
+    xhr.addEventListener("readystatechange", function () {
+        if (this.readyState === this.DONE) {
+            const response = JSON.parse(this.responseText);
+
+            if (response.status === "success") {
+                const downloadLink = response.data[0].url; // Assuming the API returns download URLs in this format
+                document.getElementById("response").innerHTML = `
+                    <a href="${downloadLink}" target="_blank" download>Click here to download</a>
+                `;
+            } else {
+                document.getElementById("response").textContent = "Failed to fetch the video.";
+            }
+        }
+    });
+
+    xhr.open("POST", "https://youtube-media-downloader.p.rapidapi.com/v2/misc/list-items");
+    xhr.setRequestHeader("x-rapidapi-key", "8af7517ea2msh54f81da03fa1237p12d1d9jsnc19ac933ed73");
+    xhr.setRequestHeader("x-rapidapi-host", "youtube-media-downloader.p.rapidapi.com");
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+    xhr.send(data);
+});</script>
+</body>
+</html>
